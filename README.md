@@ -53,4 +53,6 @@ chmod +x generate-key.sh
 ./generate-key.sh
 ```
 
-13. On the gateway host, go to the `gateway/` directory and start all the containers: `docker compose up -d`.
+13. On the gateway host, modify the `gateway/prometheus-config/prometheus.yml` file and add the correct IP for the sacrificial host (line 16).
+14. On the gateway host, go to the `gateway/` directory and start all the containers: `docker compose up -d`.
+15. Test if it is working by running a `ssh -o HostKeyAlgorithms=+ssh-rsa ubuntu@gateway-host-ip>`.

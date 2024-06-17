@@ -4,7 +4,10 @@ services:
     image: containerssh/containerssh:0.4.1
     restart: unless-stopped
     user: root
-    network_mode: host
+    links:
+      - auth-config-server
+    ports:
+      - '${CONTAINERSSH_SSH_PORT-22}:22'
     volumes:
       - '${CONTAINERSSH_CONFIG_PATH-./containerssh-config}:/etc/containerssh'
       - '${CONTAINERSSH_AUDIT_PATH-./containerssh-audit}:/var/log/containerssh/audit'

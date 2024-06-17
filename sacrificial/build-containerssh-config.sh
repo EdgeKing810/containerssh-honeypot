@@ -85,7 +85,7 @@ audit:
   file:
     directory: /var/log/containerssh/audit/
 auth:
-  url: "http://127.0.0.1:8080"
+  url: "http://auth-config-server"
 configserver:
-  url: "http://127.0.0.1:8080/config"
+  url: "http://auth-config-server/config"
 EOF
