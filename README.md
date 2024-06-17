@@ -9,7 +9,7 @@ Prometheus for fetching metrics and Grafana to visualize them.
 
 ## Ports to open
 
-- On the sacrificial host, port `2376` should be accessible **FROM** the gateway host.
+- On the sacrificial host, ports `2376` and `9100` should be accessible **FROM** the gateway host.
 - On the gateway host, ports `22` and `3000` need to be open publicly.
 
 ## Usage
@@ -43,8 +43,9 @@ chmod +x build-containerssh-config.sh
 
 8. Modify the `/tmp/config.yaml` to fix the identation for the values of the `cert`, `key` and `cacert` fields in the `docker -> connection` block.
 9. Copy the `/tmp/config.yaml` file from the sacrificial host to `<path_where_the_repo_was_cloned>/gateway/containerssh-config/config.yaml` on the gateway host.
-10. Start the Node Exporter container on the sacrificial host: `docker compose up -d`.
-11. On the gateway host, go to the `gatway/containerssh-config/` directory and run the `generate-key.sh` script.
+10. Pull the `containerssh-guest-image` docker image on the sacrificial host: `docker pull containerssh/containerssh-guest-image:latest`.
+11. Start the Node Exporter container on the sacrificial host: `docker compose up -d`.
+12. On the gateway host, go to the `gatway/containerssh-config/` directory and run the `generate-key.sh` script.
 
 ```bash
 cd gatway/containerssh-config/
@@ -52,4 +53,4 @@ chmod +x generate-key.sh
 ./generate-key.sh
 ```
 
-12. On the gateway host, go to the `gateway/` directory and start all the containers: `docker compose up -d`.
+13. On the gateway host, go to the `gateway/` directory and start all the containers: `docker compose up -d`.

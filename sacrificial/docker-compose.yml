@@ -3,6 +3,7 @@ services:
     container_name: ${HOSTNAME-sacrificial}-node-exporter
     image: prom/node-exporter:v1.7.0
     restart: unless-stopped
+    user: root
     ports:
       - '${NODE_EXPORTER_PORT-9100}:9100'
     volumes:
