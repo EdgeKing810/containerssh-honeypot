@@ -1,0 +1,52 @@
+services:
+  grafana:
+    container_name: ${HOSTNAME-gateway}-grafana
+    image: grafana/grafana:10.4.0
+    restart: unless-stopped
+    links:
+      - prometheus
+    ports:
+      - '${GRAFANA_PORT-3000}:3000'
+    volumes:
+      - '${GRAFANA_PROVISIONING_PATH-./grafana-provisioning}:/etc/grafana/provisioning'
+      - '${GRAFANA_DATA_PATH-./grafana-data}:/var/lib/grafana'
+    environment:
+      - GF_UID=0
+      - GF_LOG_LEVEL=DEBUG
+      - GF_LOG_MODE=console
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD-admin}
+
+  prometheus:
+    container_name: ${HOSTNAME-gateway}-prometheus
+    image: prom/prometheus:v2.50.1
+    restart: unless-stopped
+    links:
+      - node-exporter
+    ports:
+      - '${PROMETHEUS_PORT-9090}:9090'
+    volumes:
+      - '${PROMETHEUS_CONFIG_PATH-./prometheus-config}:/etc/prometheus/config'
+      - '${PROMETHEUS_DATA_PATH-./prometheus-data}:/prometheus'
+    command:
+      - '--config.file=/etc/prometheus/config/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention=15d'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+
+  node-exporter:
+    container_name: ${HOSTNAME-gateway}-node-exporter
+    image: prom/node-exporter:v1.7.0
+    restart: unless-stopped
+    ports:
+      - '${NODE_EXPORTER_PORT-9100}:9100'
+    volumes:
+      - '/proc:/host/proc:ro'
+      - '/sys:/host/sys:ro'
+      - '/:/rootfs:ro'
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
