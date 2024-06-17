@@ -1,4 +1,22 @@
 services:
+  containerssh:
+    container_name: ${HOSTNAME-gateway}-containerssh
+    image: containerssh/containerssh:0.4.1
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - '${CONTAINERSSH_CONFIG_PATH-./containerssh-config}:/etc/containerssh'
+      - '${CONTAINERSSH_AUDIT_PATH-./containerssh-audit}:/var/log/containerssh/audit'
+
+  auth-config-server:
+    container_name: ${HOSTNAME-gateway}-auth-config-server
+    image: containerssh/containerssh-test-authconfig:0.4.1
+    restart: unless-stopped
+    ports:
+      - '${AUTH_CONFIG_SERVER_PORT-8080}:8080'
+    environment:
+      - CONTAINERSSH_ALLOW_ALL=1
+
   grafana:
     container_name: ${HOSTNAME-gateway}-grafana
     image: grafana/grafana:10.4.0
@@ -23,6 +41,7 @@ services:
     restart: unless-stopped
     links:
       - node-exporter
+      - containerssh
     ports:
       - '${PROMETHEUS_PORT-9090}:9090'
     volumes:
