@@ -1,6 +1,7 @@
 #! /bin/bash
 
-ip -r
+HOST=localhost
+IP_ADDR=10.104.0.2
 
 mkdir -p $HOME/docker-certs/
 cd $HOME/docker-certs/
@@ -10,12 +11,6 @@ cd $HOME/docker-certs/
 openssl genrsa -aes256 -out ca-key.pem 4096
 openssl req -new -x509 -days 365 -key ca-key.pem -sha256 -out ca.pem
 openssl genrsa -out server-key.pem 4096
-
-echo Enter Host:
-read $HOST
-
-echo Enter IP Address:
-read $IP_ADDR
 
 openssl req -subj "/CN=$HOST" -sha256 -new -key server-key.pem -out server.csr
 
@@ -39,8 +34,8 @@ chmod -v 0444 ca.pem server-cert.pem cert.pem
 
 # Modify the systemd service file
 
-TARGET_DIR="$(systemctl cat docker | grep docker.service | awk '{print $NF}').d"
-mkdir "$TARGET_DIR"
+TARGET_DIR=/usr/lib/systemd/system/docker.service.d/override.conf.d
+mkdir -p "$TARGET_DIR"
 
 cat <<EOF > "$TARGET_DIR/override.conf"
 [Service]
