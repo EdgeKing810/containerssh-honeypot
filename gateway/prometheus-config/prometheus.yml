@@ -13,6 +13,15 @@ scrape_configs:
   - job_name: 'node'
     static_configs:
       - targets: ['node-exporter:9100']
+      - targets: ['10.104.0.2:9100']
+    scheme: 'http'
+    scrape_interval: 1s
+    metrics_path: /metrics
+    params:
+      format: ['prometheus']
+  - job_name: 'containerssh'
+    static_configs:
+      - targets: ['containerssh:9101']
     scheme: 'http'
     scrape_interval: 1s
     metrics_path: /metrics

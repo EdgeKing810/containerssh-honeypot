@@ -7,10 +7,11 @@ CA_CERT=$(cat $HOME/docker-certs/ca.pem)
 KEY=$(cat $HOME/docker-certs/key.pem)
 CERT=$(cat $HOME/docker-certs/cert.pem)
 
-cat <<EOF > "/tmp/config.yml"
+cat <<EOF > "/tmp/config.yaml"
 log:
-  level: warning
+  level: debug
 ssh:
+  listen: 0.0.0.0:22
   banner: |
     ********************************************************************
                                Warning!
@@ -31,15 +32,15 @@ docker:
   connection:
     host: tcp://${IP_ADDR}:2376
     cert: |
-${CERT}
+      ${CERT}
     key: |
-${KEY}
+      ${KEY}
     cacert: |
-${CA_CERT}
+      ${CA_CERT}
   execution:
     imagePullPolicy: Never
     container:
-      image: containerssh/test-guest
+      image: containerssh/containerssh-guest-image:latest
       hostname: bitcoin
       # Disable network in the container
       networkdisabled: true
@@ -70,32 +71,19 @@ ${CA_CERT}
         /home/ubuntu: rw,noexec,nosuid,size=65536k,uid=1000,gid=1000
 metrics:
   enable: true
-  listen: "0.0.0.0:9101"
-  path: "/metrics"
+  listen: '0.0.0.0:9101'
+  path: '/metrics'
 audit:
   enable: true
   format: binary
-  storage: s3
+  storage: file
   intercept:
     stdin: true
     stdout: true
     stderr: true
     passwords: true
-  s3:
-    # Local directory to store the audit log temporarily.
-    local: /var/log/containerssh/audit/
-    accessKey: YOUR-S3-ACCESS-KEY-HERE
-    secretKey: YOUR-S3-SECRET-KEY-HERE
-    region: YOUR-S3-REGION
-    bucket: YOUR-S3-BUCKET-NAME
-    # Optional: set your S3 endpoint
-    endpoint: https://YOUR-S3-ENDPOINT
-    # Optional: use path-style access for buckets
-    pathStyleAccess: true
-    metadata:
-      # Which metadata fields to set in the object storage.
-      username: true
-      ip: false
+  file:
+    directory: /var/log/containerssh/audit/
 auth:
   url: "http://127.0.0.1:8080"
 configserver:
