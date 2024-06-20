@@ -1,20 +1,21 @@
 services:
   containerssh:
     container_name: ${HOSTNAME-gateway}-containerssh
-    image: containerssh/containerssh:0.4.1
+    image: containerssh/containerssh:v0.5.1
     restart: unless-stopped
     user: root
     links:
       - auth-config-server
     ports:
       - '${CONTAINERSSH_SSH_PORT-22}:22'
+      - '${CONTAINERSSH_METRICS_PORT-9101}:9101'
     volumes:
       - '${CONTAINERSSH_CONFIG_PATH-./containerssh-config}:/etc/containerssh'
       - '${CONTAINERSSH_AUDIT_PATH-./containerssh-audit}:/var/log/containerssh/audit'
 
   auth-config-server:
     container_name: ${HOSTNAME-gateway}-auth-config-server
-    image: containerssh/containerssh-test-authconfig:0.4.1
+    image: containerssh/containerssh-test-authconfig:0.5.1
     restart: unless-stopped
     user: root
     ports:
