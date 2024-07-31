@@ -15,7 +15,7 @@ services:
 
   auth-config-server:
     container_name: ${HOSTNAME-gateway}-auth-config-server
-    image: containerssh/containerssh-test-authconfig:0.5.1
+    image: containerssh/containerssh-test-authconfig:v0.5.1
     restart: unless-stopped
     user: root
     ports:
